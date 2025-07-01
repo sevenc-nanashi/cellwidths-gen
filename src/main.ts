@@ -1,8 +1,8 @@
 import * as fs from "node:fs/promises";
 import { BinaryReader } from "@sevenc-nanashi/binaryseeker";
-import * as parser from "./parser.ts";
-import yargs from "yargs";
 import { renderFilled } from "oh-my-logo";
+import yargs from "yargs";
+import * as parser from "./parser.ts";
 
 export async function main() {
   await showLogo();

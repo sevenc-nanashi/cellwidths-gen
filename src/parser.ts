@@ -394,7 +394,12 @@ export function readName(reader: BinaryReader, offset: number): NameTable {
   }
 
   for (const record of records) {
-    if (!(record.platformId === 0 || (record.platformId === 3 && record.encodingId === 1))) {
+    if (
+      !(
+        record.platformId === 0 ||
+        (record.platformId === 3 && record.encodingId === 1)
+      )
+    ) {
       // Skip records that are not in the desired platform/encoding
       continue;
     }
