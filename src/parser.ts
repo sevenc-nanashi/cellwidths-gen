@@ -222,14 +222,17 @@ export function readCmap(reader: BinaryReader, offset: number): CmapTable {
     const subTableFormat = reader.readUInt16BE();
     let glyphMap: Map<string, number> | null = null;
 
-    // TTF files can contain multiple cmap subtables.
-    // We are interested in format 4 (segment mapping to delta values)
-    // and format 12 (segmented coverage).
-    // Other formats are not supported.
     if (subTableFormat === 4) {
       glyphMap = parseCmapSubtableFormat4(reader);
+    } else if (subTableFormat === 6) {
+      glyphMap = parseCmapSubtableFormat6(reader);
     } else if (subTableFormat === 12) {
       glyphMap = parseCmapSubtableFormat12(reader);
+    } else {
+      console.warn(
+        `Unsupported cmap subtable format: ${subTableFormat}. Skipping.`,
+      );
+      continue;
     }
 
     record.subTable = {
@@ -328,7 +331,7 @@ function parseCmapSubtableFormat12(reader: BinaryReader): Map<string, number> {
   return glyphIndexMap;
 }
 
-function _parseCmapSubtableFormat6(reader: BinaryReader): Map<string, number> {
+function parseCmapSubtableFormat6(reader: BinaryReader): Map<string, number> {
   // format: 6
   const _length = reader.readUInt16BE();
   const _language = reader.readUInt16BE();
@@ -344,4 +347,66 @@ function _parseCmapSubtableFormat6(reader: BinaryReader): Map<string, number> {
   }
 
   return glyphIndexMap;
+}
+
+export type NameTable = {
+  format: number;
+  count: number;
+  stringOffset: number;
+  records: NameRecord[];
+};
+
+export type NameRecord = {
+  platformId: number;
+  encodingId: number;
+  languageId: number;
+  nameId: number;
+  length: number;
+  offset: number;
+
+  name: string;
+};
+
+export function readName(reader: BinaryReader, offset: number): NameTable {
+  reader.seek(offset);
+  const format = reader.readUInt16BE();
+  const count = reader.readUInt16BE();
+  const stringOffset = reader.readUInt16BE();
+
+  const records: NameRecord[] = [];
+  for (let i = 0; i < count; i++) {
+    const platformId = reader.readUInt16BE();
+    const encodingId = reader.readUInt16BE();
+    const languageId = reader.readUInt16BE();
+    const nameId = reader.readUInt16BE();
+    const length = reader.readUInt16BE();
+    const recordOffset = reader.readUInt16BE();
+
+    records.push({
+      platformId,
+      encodingId,
+      languageId,
+      nameId,
+      length,
+      offset: recordOffset,
+      name: "",
+    });
+  }
+
+  for (const record of records) {
+    if (!(record.platformId === 0 || (record.platformId === 3 && record.encodingId === 1))) {
+      // Skip records that are not in the desired platform/encoding
+      continue;
+    }
+    reader.seek(offset + record.offset + stringOffset);
+    const nameBytes = reader.readBytes(record.length);
+    record.name = new TextDecoder("utf-16be").decode(nameBytes);
+  }
+
+  return {
+    format,
+    count,
+    stringOffset,
+    records,
+  };
 }
