@@ -1,4 +1,5 @@
 # cellwidths-gen / CLI tool for generating Vim's `setcellwidths` configuration
+[![npm](https://img.shields.io/npm/v/cellwidths-gen?color=blue&label=npm)](https://www.npmjs.com/package/cellwidths-gen)
 
 `cellwidths-gen` is a CLI tool that generates a Vim script to configure character widths for a given TrueType font file (`.ttf`). This script helps Vim correctly distinguish between half-width and full-width characters, which is essential for proper alignment and display of text, especially in CJK environments.
 
@@ -11,7 +12,7 @@
 ## Usage
 
 ```bash
-cellwidths-gen <path-to-font-file> [options]
+npx cellwidths-gen <path-to-font-file> [options]
 ```
 
 ### Arguments
