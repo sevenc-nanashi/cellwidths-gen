@@ -2,8 +2,10 @@ import * as fs from "node:fs/promises";
 import { BinaryReader } from "@sevenc-nanashi/binaryseeker";
 import * as parser from "./parser.ts";
 import yargs from "yargs";
+import { renderFilled } from "oh-my-logo";
 
 export async function main() {
+  await showLogo();
   const { fontFilePath, outputPath } = await parseArgs();
 
   console.log(`Reading font file: ${fontFilePath}`);
@@ -34,6 +36,12 @@ export async function main() {
   const vimScriptContent = generateVimScript(advanceWidths, name);
   console.log(`Writing Vim script to ${outputPath}`);
   await fs.writeFile(outputPath, vimScriptContent);
+}
+
+async function showLogo() {
+  await renderFilled("cellwidths-gen", {
+    palette: ["#3fe702", "#009933", "#006b05"],
+  });
 }
 
 async function parseArgs() {
