@@ -176,7 +176,7 @@ function generateVimScript(
   output.push(
     `  if g:cellwidths_gen_current != '${nonce}' && &guifont[0:${
       fontName.length
-    }] == '${fontName}:'`,
+    }] == ${JSON.stringify(fontName)}`,
   );
   output.push(`    let g:cellwidths_gen_current = '${nonce}'`);
   output.push(`    call setcellwidths(s:cellwidths)`);
