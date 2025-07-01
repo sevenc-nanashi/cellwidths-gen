@@ -1,22 +1,28 @@
 {
-  "name": "ambiwidth-gen",
+  "name": "cellwidths-gen",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "type": "module",
+  "bin": "./dist/cli.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "pnpm biome check .",
-    "lint:fix": "pnpm biome check --write ."
+    "lint:fix": "pnpm biome check --write .",
+    "build": "pkgroll",
+    "cli": "node --experimental-strip-types ./src/cli.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.12.4",
-  "dependencies": {
-    "@sevenc-nanashi/binaryseeker": "jsr:^1.2.1"
-  },
   "devDependencies": {
     "@biomejs/biome": "^2.0.6",
-    "@types/node": "^24.0.8"
+    "@sevenc-nanashi/binaryseeker": "jsr:^1.2.1",
+    "@types/node": "^24.0.8",
+    "@types/yargs": "^17.0.33",
+    "pkgroll": "^2.13.1"
+  },
+  "dependencies": {
+    "oh-my-logo": "^0.1.0",
+    "yargs": "^18.0.0"
   }
 }
