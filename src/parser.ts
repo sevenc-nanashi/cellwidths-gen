@@ -364,7 +364,7 @@ export type NameRecord = {
   length: number;
   offset: number;
 
-  name: string;
+  string: string;
 };
 
 export function readName(reader: BinaryReader, offset: number): NameTable {
@@ -389,7 +389,7 @@ export function readName(reader: BinaryReader, offset: number): NameTable {
       nameId,
       length,
       offset: recordOffset,
-      name: "",
+      string: "",
     });
   }
 
@@ -400,7 +400,7 @@ export function readName(reader: BinaryReader, offset: number): NameTable {
     }
     reader.seek(offset + record.offset + stringOffset);
     const nameBytes = reader.readBytes(record.length);
-    record.name = new TextDecoder("utf-16be").decode(nameBytes);
+    record.string = new TextDecoder("utf-16be").decode(nameBytes);
   }
 
   return {
