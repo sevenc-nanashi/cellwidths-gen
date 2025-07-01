@@ -1,4 +1,4 @@
-import { BinaryReader } from "@sevenc-nanashi/binaryseeker";
+import type { BinaryReader } from "@sevenc-nanashi/binaryseeker";
 
 export type FontDirectory = {
   scalerType: string;
@@ -243,9 +243,9 @@ export function readCmap(reader: BinaryReader, offset: number): CmapTable {
   };
 }
 function parseCmapSubtableFormat4(reader: BinaryReader): Map<string, number> {
-  const format = 4;
-  const length = reader.readUInt16BE();
-  const language = reader.readUInt16BE();
+  const _format = 4;
+  const _length = reader.readUInt16BE();
+  const _language = reader.readUInt16BE();
   const segCountX2 = reader.readUInt16BE();
   const segCount = segCountX2 / 2;
   void reader.readUInt16BE(); // searchRange
@@ -306,8 +306,8 @@ function parseCmapSubtableFormat4(reader: BinaryReader): Map<string, number> {
 function parseCmapSubtableFormat12(reader: BinaryReader): Map<string, number> {
   // format: 12
   void reader.readUInt16BE(); // reserved
-  const length = reader.readUInt32BE();
-  const language = reader.readUInt32BE();
+  const _length = reader.readUInt32BE();
+  const _language = reader.readUInt32BE();
   const numGroups = reader.readUInt32BE();
 
   const glyphIndexMap = new Map<string, number>();
@@ -328,10 +328,10 @@ function parseCmapSubtableFormat12(reader: BinaryReader): Map<string, number> {
   return glyphIndexMap;
 }
 
-function parseCmapSubtableFormat6(reader: BinaryReader): Map<string, number> {
+function _parseCmapSubtableFormat6(reader: BinaryReader): Map<string, number> {
   // format: 6
-  const length = reader.readUInt16BE();
-  const language = reader.readUInt16BE();
+  const _length = reader.readUInt16BE();
+  const _language = reader.readUInt16BE();
   const firstCode = reader.readUInt16BE();
   const entryCount = reader.readUInt16BE();
 

@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "pnpm biome check .",
+    "lint:fix": "pnpm biome check --write ."
   },
   "keywords": [],
   "author": "",
@@ -14,6 +16,7 @@
     "@sevenc-nanashi/binaryseeker": "jsr:^1.2.1"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.0.6",
     "@types/node": "^24.0.8"
   }
 }
