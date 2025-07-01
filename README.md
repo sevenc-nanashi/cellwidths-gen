@@ -27,12 +27,12 @@ npx cellwidths-gen <path-to-font-file> [options]
 ### Example
 
 ```bash
-cellwidths-gen /path/to/your/font.ttf -o ~/.vim/plugin/cellwidths_myfont.vim
+npx cellwidths-gen /path/to/your/font.ttf -o ~/.vim/plugin/cellwidths_myfont.vim
 ```
 Or, if you're using Neovim:
 
 ```bash
-cellwidths-gen /path/to/your/font.ttf -o ~/.config/nvim/plugin/cellwidths_myfont.vim
+npx cellwidths-gen /path/to/your/font.ttf -o ~/.config/nvim/plugin/cellwidths_myfont.vim
 ```
 
 This command will generate a `cellwidths.vim` file in your Vim's `plugin` directory. When you start Vim, this script will automatically be loaded. It will check if the `guifont` option is set to the font you specified, and if so, it will apply the correct character width settings.
