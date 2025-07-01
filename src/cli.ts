@@ -1,3 +1,3 @@
 import { main } from "./main.ts";
 
-main();
+process.exit(await main());

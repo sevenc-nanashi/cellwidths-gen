@@ -4,7 +4,7 @@ import { renderFilled } from "oh-my-logo";
 import yargs from "yargs";
 import * as parser from "./parser.ts";
 
-export async function main() {
+export async function main(): Promise<number> {
   await showLogo();
   const { fontFilePath, outputPath } = await parseArgs();
 
@@ -19,23 +19,29 @@ export async function main() {
   )?.string;
   if (!name) {
     console.error("Font name not found in the 'name' table.");
-    return;
+    return 1;
   }
   console.log(`Font name: ${name}`);
   const { charToGlyphId } = processCmapTable(cmapTable);
 
   console.log(`Found ${charToGlyphId.size} characters.`);
   const advanceWidths = calculateAdvanceWidths(charToGlyphId, hmtxTable);
-  if (advanceWidths.size !== 2) {
+  if (advanceWidths.size < 2) {
     console.error(
-      `Expected 2 advance widths, found ${advanceWidths.size}. This is likely not a valid monospace font.`,
+      `Expected more than 2 advance widths, found ${advanceWidths.size}.`,
     );
-    return;
+    return 1;
+  } else if (advanceWidths.size > 2) {
+    console.warn(
+      `Found more than 2 advance widths (${advanceWidths.size}), using only the two most common.`,
+    );
   }
 
   const vimScriptContent = generateVimScript(advanceWidths, name);
   console.log(`Writing Vim script to ${outputPath}`);
   await fs.writeFile(outputPath, vimScriptContent);
+
+  return 0;
 }
 
 async function showLogo() {
@@ -149,11 +155,21 @@ function generateVimScript(
   output.push(`  let g:cellwidths_gen_current = 'none'`);
   output.push(`endif`);
 
-  const smallerWidth = Math.min(...advanceWidths.keys());
-  const _largerWidth = Math.max(...advanceWidths.keys());
+  const widths = Array.from(advanceWidths.entries());
+  widths.sort((a, b) => b[1].size - a[1].size);
+  const allowedWidths = [widths[0][0], widths[1][0]];
+  allowedWidths.sort((a, b) => a - b);
+  const smallerWidth = allowedWidths[0];
+  const _largerWidth = allowedWidths[1];
 
+  let numAddedChars = 0;
   const allSegments: [number, number, number][] = [];
-  for (const [width, chars] of advanceWidths.entries()) {
+  for (const width of allowedWidths) {
+    const chars = advanceWidths.get(width);
+    if (!chars) {
+      throw new Error(`Unreachable: ${width} not found in advanceWidths`);
+    }
+    numAddedChars += chars.size;
     const charCodes = Array.from(chars).map((c) => c.codePointAt(0) || 0);
     charCodes.sort((a, b) => a - b);
     const segments = [[charCodes[0], charCodes[0]]];
@@ -173,6 +189,9 @@ function generateVimScript(
       allSegments.push([start, end, widthValue]);
     }
   }
+  console.log(
+    `Added ${numAddedChars} characters with widths: ${allowedWidths.join(", ")}`,
+  );
   output.push(
     `let s:cellwidths = json_decode(${JSON.stringify(JSON.stringify(allSegments))})`,
   );
@@ -184,12 +203,13 @@ function generateVimScript(
   output.push(
     `  if g:cellwidths_gen_current != '${nonce}' && &guifont[0:${
       fontName.length
-    }] == ${JSON.stringify(fontName)}`,
+    }] == ${JSON.stringify(`${fontName}:`)}`,
   );
   output.push(`    let g:cellwidths_gen_current = '${nonce}'`);
   output.push(`    call setcellwidths(s:cellwidths)`);
   output.push(`  endif`);
   output.push(`endfunction`);
+  output.push(`call s:update_cellwidths()`);
 
   return output.join("\n");
 }
