@@ -1,6 +1,7 @@
 {
   "name": "cellwidths-gen",
-  "version": "1.0.0",
+  "description": "CLI tool for generating Vim's `setcellwidths` configuration",
+  "version": "0.1.0",
   "type": "module",
   "bin": "./dist/cli.js",
   "scripts": {
@@ -11,8 +12,20 @@
     "cli": "node --experimental-strip-types ./src/cli.ts"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "files": [
+    "dist"
+  ],
+  "author": {
+    "name": "Nanashi.",
+    "url": "https://sevenc7c.com",
+    "email": "sevenc7c@sevenc7c.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sevenc-nanashi/cellwidths-gen.git"
+  },
+  "homepage": "https://github.com/sevenc-nanashi/cellwidths-gen",
+  "license": "MIT",
   "packageManager": "pnpm@10.12.4",
   "devDependencies": {
     "@biomejs/biome": "^2.0.6",
