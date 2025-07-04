@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "moduleResolution": "bundler",
+    "module": "esnext",
+    "target": "esnext",
+    "lib": ["esnext", "dom"]
+  }
+}
